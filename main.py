@@ -21,29 +21,28 @@ def main():
                 translit_fio = get_translit_fio(familia, name, otchestvo)
                 file_path = os.path.join(personal_dir, f"{translit_fio['familia']}.bat")
 
-                bat_script = f"""
-                    @echo off
-                    setlocal
-                    
-                    set "WebDAV_Address=91.197.207.176"
-                    set "Username={translit_fio['familia']}_{translit_fio['name'][0]}{translit_fio['otchestvo'][0]}"
-                    set "Password={get_user_password(translit_fio)}"
-                    set "DriveLetter=S"
-                    
-                    net use %DriveLetter% "https://%Username%:%Password%@%WebDAV_Address%" /PERSISTENT:YES
-                    
-                    if errorlevel 1 (
-                        echo Подключение не удалось.
-                        exit /b 1
-                    ) else (
-                        echo Подключение к S: успешно установлено.
-                    )
+                bat_script = f"""@echo off
+setlocal
 
-                    exit /b 0
-                """
-                with open(file_path, 'w') as file:
+set "WebDAV_Address=91.197.207.176"
+set "Username={translit_fio['familia']}_{translit_fio['name'][0]}{translit_fio['otchestvo'][0]}"
+set "Password={get_user_password(translit_fio)}"
+set "DriveLetter=S"
+
+net use %DriveLetter% "http://%Username%:%Password%@%WebDAV_Address%" /PERSISTENT:YES
+
+if errorlevel 1 (
+    echo Подключение не удалось.
+    pause
+    exit /b 1
+) else (
+    echo Подключение к S: успешно установлено.
+    pause
+)
+
+exit /b 0"""
+                with open(file_path, 'w', encoding='cp866') as file:
                     file.write(bat_script)
-
                 file.close()
 
 
@@ -101,8 +100,6 @@ def get_translit_fio(familia, name, otchestvo):
 
 def get_user_password(string_dict):
 
-    result_strings = []
-
     familia = string_dict['familia']
     name = string_dict['name']
     otchestvo = string_dict['otchestvo']
@@ -136,10 +133,7 @@ def get_user_password(string_dict):
     # Добавляем к строке результат деления с остатком
     result_string = str(total_length % 6) + result_string + str(remainder)
 
-    result_strings.append(result_string)
-    print(string_dict, result_string)
-
-    return result_strings
+    return result_string
 
 
 if __name__ == '__main__':
