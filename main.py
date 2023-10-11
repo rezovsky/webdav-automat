@@ -1,6 +1,5 @@
 import os
 import xlrd
-from htpasswd import HtpasswdFile
 
 
 def main():
@@ -18,17 +17,19 @@ def main():
             familia, name, otchestvo = cell_value.split()
             personal_dir = os.path.join(basedir, f'{familia} {name} {otchestvo}')
             translit_fio = get_translit_fio(familia, name, otchestvo)
+            user_name = get_user_name(translit_fio)
             user_password = get_user_password(translit_fio)
+
             if not os.path.exists(personal_dir):
                 os.mkdir(personal_dir)
 
-                file_path = os.path.join(personal_dir, f"{translit_fio['familia']}.bat")
+                file_path = os.path.join(personal_dir, f"{user_name}.bat")
 
                 bat_script = f"""@echo off
 setlocal
 
 set "WebDAV_Address=91.197.207.176"
-set "Username={translit_fio['familia']}_{translit_fio['name'][0]}{translit_fio['otchestvo'][0]}"
+set "Username={user_name}"
 set "Password={user_password}"
 set "DriveLetter=S"
 
@@ -142,6 +143,10 @@ def generate_htpasswd_file(username, password, output_file):
     htpasswd = HtpasswdFile(output_file)
     htpasswd.update({username: password})
     htpasswd.close()
+
+
+def get_user_name(translit_fio):
+    return f"{translit_fio['familia']}_{translit_fio['name'][0]}{translit_fio['otchestvo'][0]}"
 
 
 if __name__ == '__main__':
