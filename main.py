@@ -1,21 +1,25 @@
 import os
 import xlrd
+from dotenv import load_dotenv
 
 
 def main():
-    xlslist = xlrd.open_workbook('list.xls')
+    load_dotenv()
+    list_file = os.getenv('LIST_FILE')
+    data_dir = os.getenv('FOLDER')
+    host = os.getenv('HOST')
+
+    xlslist = xlrd.open_workbook(list_file)
     sheet = xlslist.sheet_by_index(0)
 
-    basedir = 'Учителя'
-
-    if not os.path.exists(basedir):
-        os.mkdir(basedir)
+    if not os.path.exists(data_dir):
+        os.mkdir(data_dir)
 
     for row in range(sheet.nrows):
         for col in range(sheet.ncols):
             cell_value = sheet.cell_value(row, col)
             familia, name, otchestvo = cell_value.split()
-            personal_dir = os.path.join(basedir, f'{familia} {name} {otchestvo}')
+            personal_dir = os.path.join(data_dir, f'{familia} {name} {otchestvo}')
             translit_fio = get_translit_fio(familia, name, otchestvo)
             user_name = get_user_name(translit_fio)
             user_password = get_user_password(translit_fio)
@@ -28,7 +32,7 @@ def main():
                 bat_script = f"""@echo off
 setlocal
 
-set "WebDAV_Address=91.197.207.176"
+set "WebDAV_Address={host}"
 set "Username={user_name}"
 set "Password={user_password}"
 set "DriveLetter=S"
