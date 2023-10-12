@@ -8,6 +8,7 @@ def main():
     list_file = os.getenv('LIST_FILE')
     data_dir = os.getenv('FOLDER')
     host = os.getenv('HOST')
+    drive = os.getenv('DRIVE')
 
     xlslist = xlrd.open_workbook(list_file)
     sheet = xlslist.sheet_by_index(0)
@@ -35,7 +36,7 @@ setlocal
 set "WebDAV_Address={host}"
 set "Username={user_name}"
 set "Password={user_password}"
-set "DriveLetter=S"
+set "DriveLetter={drive}"
 
 net use %DriveLetter% "http://%Username%:%Password%@%WebDAV_Address%" /PERSISTENT:YES
 
