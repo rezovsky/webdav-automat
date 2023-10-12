@@ -31,23 +31,8 @@ def main():
                 file_path = os.path.join(personal_dir, f"{user_name}.bat")
 
                 bat_script = f"""@echo off
-setlocal
 
-set "WebDAV_Address={host}"
-set "Username={user_name}"
-set "Password={user_password}"
-set "DriveLetter={drive}"
-
-net use %DriveLetter% "http://%Username%:%Password%@%WebDAV_Address%" /PERSISTENT:YES
-
-if errorlevel 1 (
-    echo Подключение не удалось.
-    pause
-    exit /b 1
-) else (
-    echo Подключение к S: успешно установлено.
-    pause
-)
+net use {drive}: "http://{user_name}:{user_password}@{host}" /PERSISTENT:YES
 
 exit /b 0"""
                 with open(file_path, 'w', encoding='cp866') as file:
