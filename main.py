@@ -34,6 +34,7 @@ def main():
 
 net use {drive}: "http://{user_name}:{user_password}@{host}" /PERSISTENT:YES
 
+pause
 exit /b 0"""
                 with open(file_path, 'w', encoding='cp866') as file:
                     file.write(bat_script)
